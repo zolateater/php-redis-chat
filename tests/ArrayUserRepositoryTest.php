@@ -1,7 +1,14 @@
 <?php
 
+use App\Model\User;
 use App\Store\Repository\ArrayUserRepository;
 
+/**
+ * Class ArrayUserRepositoryTest
+ * 
+ * Пусть этот класс и будет использоваться лишь для мокинга, 
+ * почему бы не убедиться, что он работает корректно?
+ */
 class ArrayUserRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -14,5 +21,29 @@ class ArrayUserRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $repository = new ArrayUserRepository();
         $repository->find(1);
+    }
+
+    /**
+     * Тест - сохранение пользователя
+     * 
+     * @test
+     * @dataProvider getUser
+     */
+    public function it_saves_user(User $user)
+    {
+        $repository = new ArrayUserRepository();
+        $this->assertFalse($repository->exists(1));
+        
+        $repository->save($user);
+        $this->assertTrue($repository->exists(1));
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser()
+    {
+        $user = new User("johnDoe", "John Doe");
+        return [[$user]];
     }
 }

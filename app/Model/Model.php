@@ -13,7 +13,7 @@ abstract class Model
     /**
      * @var int
      */
-    protected $id;
+    protected $id = 0;
 
     /**
      * @return int

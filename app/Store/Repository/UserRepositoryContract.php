@@ -35,4 +35,10 @@ interface UserRepositoryContract
      * @param User $user
      */
     public function save(User $user);
+
+    /**
+     * @param string $login
+     * @return bool
+     */
+    public function loginExists(string $login) : bool;
 }
