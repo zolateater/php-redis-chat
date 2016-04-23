@@ -2,6 +2,7 @@
 
 namespace App\Store\Repository;
 
+use App\Exception\Application\Repository\LoginDoesNotExistsException;
 use App\Exception\Application\Repository\UserNotFoundException;
 use App\Model\User;
 
@@ -73,8 +74,30 @@ class ArrayUserRepository implements UserRepositoryContract
      */
     public function loginExists(string $login) : bool
     {
+        foreach ($this->users as $user) {
+            if ($user->getLogin() == $login) {
+                return true;
+            }
+        }
+        
         return false;
     }
 
-
+    /**
+     * Получить пользователя по логину
+     * 
+     * @param string $login
+     * @return User
+     * @throws LoginDoesNotExistsException
+     */
+    public function fetchByLogin(string $login) : User
+    {
+        foreach ($this->users as $user) {
+            if ($user->getLogin() == $login) {
+                return $user;
+            }   
+        }
+        
+        throw new LoginDoesNotExistsException($login);
+    }
 }

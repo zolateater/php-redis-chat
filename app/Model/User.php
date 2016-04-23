@@ -25,14 +25,27 @@ class User extends Model
     protected $fullName;
 
     /**
+     * Хэш пароля пользователя
+     * Для простоты будем считать,
+     * что он связан с пользователем
+     * неразрывно
+     *
+     * @var string
+     */
+    protected $passwordHash = '';
+
+    /**
      * User constructor.
+     * 
      * @param string $login
      * @param string $fullName
+     * @param string $passwordHash
      */
-    public function __construct(string $login, string $fullName)
+    public function __construct(string $login, string $fullName, string $passwordHash = '')
     {
         $this->login = $login;
         $this->fullName = $fullName;
+        $this->passwordHash = '';
     }
 
     /**
@@ -50,4 +63,25 @@ class User extends Model
     {
         return $this->fullName;
     }
+
+    /**
+     * @return string
+     */
+    public function getPasswordHash()
+    {
+        return $this->passwordHash;
+    }
+
+    /**
+     * @param string $password
+     */
+    public function encryptPassword(string $password)
+    {
+        // Конечно, в реальном приложении следует
+        // инкапуслировать генерацию хэша по паролю,
+        // но ради простоты примера оставим это здесь
+        $this->passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    }
+
+
 }

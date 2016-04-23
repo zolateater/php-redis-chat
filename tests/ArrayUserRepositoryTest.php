@@ -15,6 +15,7 @@ class ArrayUserRepositoryTest extends \PHPUnit_Framework_TestCase
      * Тест - поиск не существующего пользователя
      * 
      * @test
+     * @group unit
      * @expectedException \App\Exception\Application\Repository\UserNotFoundException
      */
     public function it_throws_an_exception_when_you_try_to_find_non_existing_user()
@@ -27,6 +28,7 @@ class ArrayUserRepositoryTest extends \PHPUnit_Framework_TestCase
      * Тест - сохранение пользователя
      * 
      * @test
+     * @group unit
      * @dataProvider getUser
      */
     public function it_saves_user(User $user)

@@ -5,6 +5,13 @@ namespace App\Store\Repository;
 
 use App\Model\User;
 
+/**
+ * Interface UserRepositoryContract
+ * @package App\Store\Repository
+ * 
+ * Интерфейс, который должно реализовывать выбранное нами 
+ * хранилище пользователей 
+ */
 interface UserRepositoryContract
 {
     /**
@@ -31,8 +38,19 @@ interface UserRepositoryContract
     public function save(User $user);
 
     /**
+     * Метод проверки существования логина
+     * 
      * @param string $login
      * @return bool
      */
     public function loginExists(string $login) : bool;
+
+    /**
+     * Получить пользователя по его логину
+     * 
+     * @param string $login
+     * @return User
+     */
+    public function fetchByLogin(string $login) : User;
+    
 }
