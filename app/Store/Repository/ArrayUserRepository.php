@@ -5,6 +5,7 @@ namespace App\Store\Repository;
 use App\Exception\Application\Repository\LoginDoesNotExistsException;
 use App\Exception\Application\Repository\UserNotFoundException;
 use App\Model\User;
+use App\Store\Contracts\UserRepositoryContract;
 
 /**
  * Class ArrayUserRepository

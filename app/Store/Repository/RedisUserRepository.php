@@ -12,6 +12,7 @@ namespace App\Store\Repository;
 use App\Exception\Application\Repository\LoginDoesNotExistsException;
 use App\Exception\Application\Repository\UserNotFoundException;
 use App\Model\User;
+use App\Store\Contracts\UserRepositoryContract;
 use Predis\Client;
 
 /**
@@ -70,6 +71,8 @@ class RedisUserRepository implements UserRepositoryContract
      */
     public function find(int $id) : User
     {
+        // Здесь мы, очевидно, делаем лишнюю операцию,
+        // но для простоты примера пусть будет так
         if ( ! $this->exists($id) ) {
             throw new UserNotFoundException($id);
         }

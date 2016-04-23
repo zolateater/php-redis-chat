@@ -7,6 +7,7 @@ namespace App\Model;
  * @package App\Model
  * 
  * Базовый класс для моделей c id
+ * TODO: Пожалуй, выбрать более подходящее название
  */
 abstract class Model
 {

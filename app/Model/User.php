@@ -83,5 +83,13 @@ class User extends Model
         $this->passwordHash = password_hash($password, PASSWORD_DEFAULT);
     }
 
-
+    /**
+     * Создает токен для запоминания пользователя
+     * 
+     * @return RememberToken
+     */
+    public function generateRememberToken()
+    {
+        return new RememberToken($this->getId());
+    }
 }

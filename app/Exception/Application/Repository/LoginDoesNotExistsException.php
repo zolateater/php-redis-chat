@@ -1,22 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zolat
- * Date: 24.04.16
- * Time: 4:27
- */
 
 namespace App\Exception\Application\Repository;
 
-
 use App\Exception\Application\ApplicationException;
-use Exception;
 
 class LoginDoesNotExistsException extends ApplicationException
 {
+    /**
+     * @var string
+     */
+    protected $login;
+    
     public function __construct(string $login)
     {
+        $this->login = $login;
         $this->message = "Login {$login} does not exists!";
     }
 
+    /**
+     * @return string
+     */
+    public function getLogin() : string 
+    {
+        return $this->login;
+    }
 }
