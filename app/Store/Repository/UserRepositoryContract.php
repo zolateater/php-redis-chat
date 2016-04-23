@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zolat
- * Date: 23.04.16
- * Time: 18:21
- */
 
 namespace App\Store\Repository;
 
