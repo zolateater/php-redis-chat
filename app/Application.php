@@ -2,7 +2,9 @@
 
 namespace App;
 
-use Store\Repository\UserRepositoryContract;
+use App\Store\Contracts\UserRepositoryContract;
+use App\Store\Repository\RedisUserRepository;
+use Predis\Client;
 
 class Application
 {
@@ -13,10 +15,11 @@ class Application
      */
     protected $userRepository;
     
-    
+
     protected function bootstrap()
     {
-        
+        // TODO: make factory
+        $this->userRepository = new RedisUserRepository(new Client());
     }
     
     public function __construct()

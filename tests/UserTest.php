@@ -42,17 +42,17 @@ class UserTest extends PHPUnit_Framework_TestCase
     /**
      * Тест - создание токена для запоминания
      * пользователем, который существует
-     *
+     * 
      * @test
      * @group unit
      */
     public function it_can_create_token_for_remembering()
     {
         $user = new User("JohnDoe", "John Doe");
-
+        
         $repo = new ArrayUserRepository();
         $repo->save($user);
-
+        
         $token = $user->generateRememberToken();
         $this->assertEquals($token->getUserId(), $user->getId());
     }
