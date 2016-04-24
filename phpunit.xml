@@ -4,6 +4,7 @@
         <testsuite name="Unit tests">
             <directory>tests/</directory>
             <exclude>tests/RedisUserRepositoryTest.php</exclude>
+            <exclude>tests/RedisRememberTokenRepositoryTest.php</exclude>
         </testsuite>
 
     </testsuites>

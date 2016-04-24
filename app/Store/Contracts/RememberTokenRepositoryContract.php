@@ -3,6 +3,7 @@
 namespace App\Store\Contracts;
 
 
+use App\Exception\Application\Repository\TokenDoesNotExistException;
 use App\Model\RememberToken;
 
 interface RememberTokenRepositoryContract
@@ -17,17 +18,17 @@ interface RememberTokenRepositoryContract
 
     /**
      * Получить ID пользователя, ассоциированного с этим токеном
-     * 
+     *
+     * @param string $tokenValue
      * @return int
-     * @throws 
+     * @throws TokenDoesNotExistException
      */
-    public function getOwnerId() : int;
+    public function getOwnerId(string $tokenValue) : int;
 
     /**
      * Сохранить токен для запоминания
      * 
      * @param RememberToken $token
-     * @return mixed
      */
     public function save(RememberToken $token);
 }

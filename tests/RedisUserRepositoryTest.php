@@ -10,10 +10,11 @@ use Predis\Client;
  */
 class RedisUserRepositoryTest extends PHPUnit_Framework_TestCase
 {
+    use RedisConnection;
+
     public function setUp()
     {
-        $connection = $this->getTestConnection()[0][0];
-        $connection->flushdb();
+        $this->flushDb();
     }
 
     /**
@@ -21,12 +22,10 @@ class RedisUserRepositoryTest extends PHPUnit_Framework_TestCase
      *
      * @test
      * @group Redis
-     * @dataProvider getTestConnection
-     * @param Client $connection
      */
-    public function it_stores_a_user_and_allows_to_retrieve_it(Client $connection)
+    public function it_stores_a_user_and_allows_to_retrieve_it()
     {
-        $repository = new RedisUserRepository($connection);
+        $repository = new RedisUserRepository($this->getTestConnection());
 
         $this->assertFalse($repository->loginExists('johnDoe'));
         $this->assertFalse($repository->exists(1));
@@ -53,14 +52,12 @@ class RedisUserRepositoryTest extends PHPUnit_Framework_TestCase
      * Поиск несуществующего пользователя
      *
      * @test
-     * @dataProvider getTestConnection
      * @expectedException \App\Exception\Application\Repository\UserNotFoundException
      * @group Redis
-     * @param Client $connection
      */
-    public function it_throw_an_exception_if_trying_to_retrieve_not_existing_user(Client $connection)
+    public function it_throw_an_exception_if_trying_to_retrieve_not_existing_user()
     {
-        $repository = new RedisUserRepository($connection);
+        $repository = new RedisUserRepository($this->getTestConnection());
         $repository->find(99999);
     }
 
@@ -68,22 +65,12 @@ class RedisUserRepositoryTest extends PHPUnit_Framework_TestCase
      * Поиск пользователя по несуществующему логину
      *
      * @test
-     * @dataProvider getTestConnection
      * @expectedException \App\Exception\Application\Repository\LoginDoesNotExistsException
      * @group Redis
-     * @param Client $connection
      */
-    public function it_throws_an_exception_when_fetching_user_by_not_existing_id(Client $connection)
+    public function it_throws_an_exception_when_fetching_user_by_not_existing_id()
     {
-        $repository = new RedisUserRepository($connection);
+        $repository = new RedisUserRepository($this->getTestConnection());
         $repository->fetchByLogin('Vitya012341234');
-    }
-
-    public function getTestConnection()
-    {
-        // TODO: Возможность задать тестовое соединение с БД
-        return [
-            [new Client()]
-        ];
     }
 }

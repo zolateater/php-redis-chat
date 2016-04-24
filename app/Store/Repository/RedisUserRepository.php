@@ -13,13 +13,11 @@ use App\Exception\Application\Repository\LoginDoesNotExistsException;
 use App\Exception\Application\Repository\UserNotFoundException;
 use App\Model\User;
 use App\Store\Contracts\UserRepositoryContract;
-use Predis\Client;
-
 /**
  * Class RedisUserRepository
  * @package App\Store\Repository
  */
-class RedisUserRepository implements UserRepositoryContract
+class RedisUserRepository extends BaseRedisRepository implements UserRepositoryContract
 {
     /**
      * Префикс ключа хэша, в котором хранятся данные о пользователе.
@@ -36,20 +34,6 @@ class RedisUserRepository implements UserRepositoryContract
      * в котором ключ - имя пользователя, значение - его id
      */
     const LoginHashKey = 'users';
-
-    /**
-     * @var Client
-     */
-    protected $connectionClient;
-
-    /**
-     * RedisUserRepository constructor.
-     * @param Client $redisClient
-     */
-    public function __construct(Client $redisClient)
-    {
-        $this->connectionClient = $redisClient;
-    }
 
     /**
      * Есть ли такой пользователь в нашей коллекции?
