@@ -5,6 +5,7 @@
             <directory>tests/</directory>
             <exclude>tests/RedisUserRepositoryTest.php</exclude>
             <exclude>tests/RedisRememberTokenRepositoryTest.php</exclude>
+            <exclude>tests/RedisMessageRepositoryTest.php</exclude>
         </testsuite>
 
     </testsuites>

@@ -92,4 +92,16 @@ class User extends Model
     {
         return new RememberToken($this->getId());
     }
+
+    /**
+     * Удобный способ создания сообщений от имени пользователя
+     * 
+     * @param string $content
+     * @return Message
+     */
+    public function writeMessage(string $content) : Message
+    {
+        $currentDateTime = new \DateTime();
+        return new Message($this->getId(), $content, $currentDateTime);    
+    }
 }
