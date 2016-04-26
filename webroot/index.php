@@ -1,9 +1,19 @@
 <?php
 
 /*
- * For incoming HTTP connections.  
+ * lkz   
  */
+
 
 require "../vendor/autoload.php";
 
-$request = new \Symfony\Component\HttpFoundation\Request($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
+$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+
+$application = new \App\Application();
+$application->bootstrap();
+$application->setRequest($request);
+
+$response = $application->getResponse();
+$response->send();
+
+
