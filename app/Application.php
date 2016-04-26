@@ -36,7 +36,7 @@ class Application
 
     /**
      * Залогиненный пользователь
-     * 
+     *
      * @var User
      */
     protected $user;
@@ -94,7 +94,7 @@ class Application
         try {
             $attributes = $matcher->match($this->request->getPathInfo());
             $routeName = $attributes['_route'];
-            
+
             return new Response($routeName, 200);
         }
         catch (ResourceNotFoundException $e) {
@@ -109,13 +109,13 @@ class Application
     }
 
     /**
-     * Для простоты будем считать, что у нас всего один контроллер, 
+     * Для простоты будем считать, что у нас всего один контроллер,
      * количество action не будет меняться
-     * 
+     *
      * @param string $action
      */
     protected function callAction(string $action)
     {
-        
+
     }
 }
