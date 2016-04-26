@@ -1,15 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zolat
- * Date: 26.04.16
- * Time: 22:49
- */
 
 namespace App\Http;
 
-
+/**
+ * Class Controller
+ * @package App\Http
+ *
+ * Наш базовый игрушечный контроллер.
+ * Содержит залогиненного пользователя, текущий Request.
+ * 
+ * 
+ */
 class Controller
 {
-
+    
 }
