@@ -2,120 +2,118 @@
 
 namespace App;
 
+use App\Exception\Application\ApplicationException;
+use App\Exception\System\SystemException;
 use App\Model\User;
+use App\Routes\Router;
+use App\Store\Factory\RepositoryCreator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-
-use App\Exception\Application\ApplicationException;
-use App\Exception\System\SystemException;
 
 /**
  * Class Application
  * @package App
  *
  * Класс, олицетворяющий наше приложение.
- * По сути, мы проверяем - залогинен ли пользователь,
- * вызываем какой-то метод... и все.
+ * Все просто - мы принимаем запрос, возвращает ответ.
+ * Все, о чем мы уведомляем приложение - какой тип репозитория использовать для хранения данных
  */
 class Application
 {
     /**
-     * @var Request
+     * @var Router
      */
-    protected $request;
+    protected $router;
+    
+    /**
+     * @var \App\Store\Factory\AbstractRepositoryFactory
+     */
+    private $repositoryFactory;
 
     /**
-     * @var RouteCollection
+     * Application constructor.
+     * 
+     * @param string $databaseType 
+     * @see RepositoryCreator 
      */
-    protected $routeCollection;
-
-    /**
-     * Залогиненный пользователь
-     *
-     * @var User
-     */
-    protected $user;
-
-    /**
-     * @return Request
-     */
-    public function getRequest()
+    public function __construct(string $databaseType)
     {
-        return $this->request;
+        $repositoryCreator = new RepositoryCreator();
+        $this->repositoryFactory = $repositoryCreator->getFactory($databaseType);
+        $this->router = new Router();
     }
 
     /**
-     * Ну, это конечно же для тестирования
-     * Мы можем сгенерировать некоторый запрос, и установить его нашему приложению
-     *
+     * Обработка запроса
+     * 
      * @param Request $request
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * Указываем здесь все uri в нашем приложении
-     */
-    protected function bootstrapRoutes()
-    {
-        $this->routeCollection = new RouteCollection();
-
-        // Наша страница чата
-        $this->routeCollection->add('chatPage', new Route('', [], [], [], '', [], ['GET']));
-        // Страница, где нужно залогиниться
-        $this->routeCollection->add('signInPage', new Route('/login', [], [], [], '', [], ['GET']));
-        // Отправка формы регистрации
-        $this->routeCollection->add('registration', new Route('/register', [], [], [], '', [], 'POST'));
-        // Отправка формы входа
-        $this->routeCollection->add('login', new Route('/register', [], [], [], '', [], ['POST']));
-    }
-
-    public function bootstrap()
-    {
-        $this->bootstrapRoutes();
-    }
-
-    /**
      * @return Response
      */
-    public function getResponse() : Response
+    public function handleRequest(Request $request) : Response
     {
-        $context = new RequestContext();
-        $context->fromRequest($this->request);
-        $matcher = new UrlMatcher($this->routeCollection, $context);
-
         try {
-            $attributes = $matcher->match($this->request->getPathInfo());
-            $routeName = $attributes['_route'];
-
-            return new Response($routeName, 200);
+            // Находим контроллер для нашего запроса
+            $routeInfo = $this->router->detectCallableFor($request);
+            return new Response("Route found", 200);
         }
         catch (ResourceNotFoundException $e) {
-            return new Response("Sorry, Mario, but your page is not found", 404);
+            return $this->getNotFoundResponse($e);
         }
         catch (ApplicationException $e) {
-            return new Response($e->getMessage(), 500);
+            return $this->getApplicationErrorResponse($e);
         }
         catch (SystemException $e) {
-            return new Response("Something really critical just happened", 500);
+            return $this->getCriticalErrorResponse($e);
         }
     }
 
     /**
-     * Для простоты будем считать, что у нас всего один контроллер,
-     * количество action не будет меняться
+     * Получает пользователя, который совершает этот запрос
      *
-     * @param string $action
+     * @param Request $request
+     * @return User|null
      */
-    protected function callAction(string $action)
+    public function authorize(Request $request)
     {
+        
+    }
 
+    public function getRepositoryFactory()
+    {
+        
+    }
+    
+    /**
+     * Обработка ошибки 404
+     *
+     * @param ResourceNotFoundException $exception
+     * @return Response
+     */
+    public function getNotFoundResponse(ResourceNotFoundException $exception) : Response
+    {
+        return new Response("Sorry, Mario, but your page is not found", 404);
+    }
+
+    /**
+     * Вернуть ответ для серьезной ошибки, мешающей работе системы
+     *
+     * @param SystemException  $exception
+     * @return Response
+     */
+    public function getCriticalErrorResponse(SystemException $exception) : Response
+    {
+        return new Response('Something really critical just happened!', 500);
+    }
+
+    /**
+     * Обработка ошибки 500
+     *
+     * @param ApplicationException $exception
+     * @return Response
+     */
+    public function getApplicationErrorResponse(ApplicationException $exception) : Response
+    {
+        return new Response('Server error', 500);
     }
 }

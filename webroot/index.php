@@ -13,7 +13,9 @@ $application = new \App\Application();
 $application->bootstrap();
 $application->setRequest($request);
 
+header("Set-Cookie: key=someOtherValue");
+
 $response = $application->getResponse();
-$response->send();
+//$response->send();
 
 

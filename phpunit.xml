@@ -1,12 +1,14 @@
 <phpunit bootstrap="tests/bootstrap.php"
          colors="true">
     <testsuites>
-        <testsuite name="Unit tests">
-            <directory>tests/</directory>
-            <exclude>tests/RedisUserRepositoryTest.php</exclude>
-            <exclude>tests/RedisRememberTokenRepositoryTest.php</exclude>
-            <exclude>tests/RedisMessageRepositoryTest.php</exclude>
+        <testsuite name="unit">
+            <directory>tests/unit/</directory>
         </testsuite>
-
+        <testsuite name="functional">
+            <directory>tests/functional</directory>
+            <exclude>tests/functional/RedisUserRepositoryTest.php</exclude>
+            <exclude>tests/functional/RedisRememberTokenRepositoryTest.php</exclude>
+            <exclude>tests/functional/RedisMessageRepositoryTest.php</exclude>
+        </testsuite>
     </testsuites>
 </phpunit>
