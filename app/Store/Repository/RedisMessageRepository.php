@@ -20,7 +20,7 @@ class RedisMessageRepository extends BaseRedisRepository implements MessageRepos
     public function getLastMessages(int $count, int $lastMessageId = 0) : array
     {
         if ($count <= 0) {
-            throw new \InvalidArgumentException("Count of messages must be greater that zero!");
+            throw new \InvalidArgumentException("Count of messages must be greater than zero!");
         }
 
         if ( ! $lastMessageId ) {

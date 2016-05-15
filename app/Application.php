@@ -2,14 +2,20 @@
 
 namespace App;
 
+use App\Auth\Authenticator;
 use App\Exception\Application\ApplicationException;
 use App\Exception\System\SystemException;
 use App\Model\User;
 use App\Routes\Router;
+use App\Store\Contracts\MessageRepositoryContract;
+use App\Store\Contracts\RememberTokenRepositoryContract;
+use App\Store\Contracts\UserRepositoryContract;
 use App\Store\Factory\RepositoryCreator;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Throwable;
 
 /**
  * Class Application
@@ -25,11 +31,21 @@ class Application
      * @var Router
      */
     protected $router;
-    
+
     /**
-     * @var \App\Store\Factory\AbstractRepositoryFactory
+     * @var UserRepositoryContract
      */
-    private $repositoryFactory;
+    protected $userRepository;
+
+    /**
+     * @var RememberTokenRepositoryContract
+     */
+    protected $tokenRepository;
+
+    /**
+     * @var MessageRepositoryContract
+     */
+    protected $messageRepository;
 
     /**
      * Application constructor.
@@ -40,8 +56,13 @@ class Application
     public function __construct(string $databaseType)
     {
         $repositoryCreator = new RepositoryCreator();
-        $this->repositoryFactory = $repositoryCreator->getFactory($databaseType);
         $this->router = new Router();
+
+        $repositoryFactory = $repositoryCreator->getFactory($databaseType);
+
+        $this->userRepository = $repositoryFactory->getUserRepository();
+        $this->tokenRepository = $repositoryFactory->getRememberTokenRepository();
+        $this->messageRepository = $repositoryFactory->getMessageRepository();
     }
 
     /**
@@ -55,16 +76,45 @@ class Application
         try {
             // Находим контроллер для нашего запроса
             $routeInfo = $this->router->detectCallableFor($request);
-            return new Response("Route found", 200);
+            
+            // Имя класса-контроллера
+            $controllerClass = $routeInfo->getFullClassName();
+            
+            // Создаем наш контроллер
+            $controller = new $controllerClass(
+                $request, 
+                $this->userRepository,
+                $this->tokenRepository,
+                $this->messageRepository,    
+                $this->authorize($request)
+            );
+            
+            // Вызываем action
+            $actionName = $routeInfo->getActionName();
+            $responseData = $controller->$actionName();
+            
+            // Если мы уже вернули Response, из action'a то ничего больше не надо 
+            if ($responseData instanceof Response) {
+                return $responseData;
+            }
+            
+            return new Response($responseData, 200);
         }
+        // 404
         catch (ResourceNotFoundException $e) {
             return $this->getNotFoundResponse($e);
         }
+        // Ошибка приложения. Здесь мы должны справиться.
         catch (ApplicationException $e) {
             return $this->getApplicationErrorResponse($e);
         }
+        // Критическая ошибка
         catch (SystemException $e) {
             return $this->getCriticalErrorResponse($e);
+        }
+        // Неотловленное исключение
+        catch (Throwable $e) {
+            return $this->getUnhandledExceptionResponse($e);
         }
     }
 
@@ -76,14 +126,10 @@ class Application
      */
     public function authorize(Request $request)
     {
-        
+        $authenticator = new Authenticator();
+        return $authenticator->authorize($request, $this->getTokenRepository(), $this->getUserRepository());
     }
 
-    public function getRepositoryFactory()
-    {
-        
-    }
-    
     /**
      * Обработка ошибки 404
      *
@@ -115,5 +161,53 @@ class Application
     public function getApplicationErrorResponse(ApplicationException $exception) : Response
     {
         return new Response('Server error', 500);
+    }
+
+    /**
+     * Обработка неотловленных исключений (ошибка 500)
+     *
+     * TODO: сделать переключалку и конфиг
+     * @param Throwable $e
+     * @return string
+     */
+    private function getUnhandledExceptionResponse(Throwable $e)
+    {
+        dump($e);
+        return "Unhandled Exception occured!<br />";
+    }
+
+    /**
+     * @return UserRepositoryContract
+     */
+    public function getUserRepository()
+    {
+        return $this->userRepository;
+    }
+
+    /**
+     * @return RememberTokenRepositoryContract
+     */
+    public function getTokenRepository()
+    {
+        return $this->tokenRepository;
+    }
+
+    /**
+     * @return MessageRepositoryContract
+     */
+    public function getMessageRepository()
+    {
+        return $this->messageRepository;
+    }
+
+    /**
+     * Возвращает путь до папки с представлениями
+     *
+     * @param string $fileName
+     * @return string
+     */
+    public static function viewPath(string $fileName = '') : string
+    {
+        return __DIR__ . '/../resources/view/' . $fileName;
     }
 }

@@ -20,7 +20,26 @@ class ArrayMessageRepository implements MessageRepositoryContract
      */
     public function getLastMessages(int $count, int $lastMessageId = 0) : array
     {
-        // TODO: Implement getLastMessages() method.
+        if ($count <= 0) {
+            throw new \InvalidArgumentException("Count of messages must be greater than zero!");
+        }
+
+        $messageCountTotal = count($this->messages);
+
+        if (!$lastMessageId) {
+            $lastMessageId = $messageCountTotal + 1;
+        }
+
+        $messagesToReturn = [];
+        for ($i = $lastMessageId - 1; $i > 0; $i--) {
+            $messagesToReturn[] = $this->messages[$i];
+
+            if (count($messagesToReturn) == $count) {
+                break;
+            }
+        }
+
+        return $messagesToReturn;
     }
 
     /**

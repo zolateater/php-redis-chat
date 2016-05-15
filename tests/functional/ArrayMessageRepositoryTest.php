@@ -1,30 +1,31 @@
 <?php
-use App\Model\Message;
-use App\Store\Repository\RedisMessageRepository;
 
 /**
- * Class RedisMessageRepositoryTest
- * 
- * Тесты для репозитория сообщений Redis
+ * Created by PhpStorm.
+ * User: zolat
+ * Date: 15.05.16
+ * Time: 14:42
  */
-class RedisMessageRepositoryTest extends PHPUnit_Framework_TestCase
+
+use App\Model\Message;
+use App\Store\Repository\ArrayMessageRepository;
+
+/**
+ * Class ArrayMessageRepositoryTest
+ * 
+ * Тестирование функционирования репозитория на массиве
+ */
+class ArrayMessageRepositoryTest extends PHPUnit_Framework_TestCase
 {
-    use RedisConnection;
-
-    public function setUp()
-    {
-        $this->flushDb();
-    }
-
     /**
      * Тест - сохранение сообщения, и его получение
-     * 
+     *
      * @test
      */
     public function it_saves_message_and_allows_to_retrieve_it()
     {
-        $repo = new RedisMessageRepository($this->getTestConnection());
-        
+        $repo = new ArrayMessageRepository();
+
         $message = new Message(1, "Some content", new DateTime());
 
         $lastMessages = $repo->getLastMessages(1);
@@ -43,46 +44,46 @@ class RedisMessageRepositoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * Тест - если запросить 0 ошибок, то вернется лишь исключение.
-     * 
+     *
      * @test
      * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Count of messages must be greater than zero!
      */
     public function it_throws_exception_if_count_of_last_messages_equals_zero()
     {
-        $repo = new RedisMessageRepository($this->getTestConnection());
+        $repo = new ArrayMessageRepository();
         $repo->getLastMessages(0);
     }
 
     /**
      * Тест - репозиторий не содержит столько сообщений, сколько запрошено,
      * поэтому вернем сколько есть
-     * 
+     *
      * @test
      */
     public function it_returns_less_messages_if_in_repo_is_not_full_enough()
     {
-        $repo = new RedisMessageRepository($this->getTestConnection());
-        
+        $repo = new ArrayMessageRepository();
+
         for ($i = 0; $i < 20; $i++) {
             $message = new Message($i, "test " . $i, new DateTime());
             $repo->save($message);
         }
-        
+
         $lastMessages = $repo->getLastMessages(100);
-        
+
         $this->assertCount(20, $lastMessages);
     }
 
     /**
      * Тест - возврат сообщений, начиная с некоторого последнего ID
      * Тест - порядок сообщений
-     * 
+     *
      * @test
      */
     public function it_returns_messages_starting_from_some_id()
     {
-        $repo = new RedisMessageRepository($this->getTestConnection());
+        $repo = new ArrayMessageRepository();
 
         for ($i = 0; $i < 30; $i++) {
             $message = new Message($i, "test " . $i, new DateTime());
@@ -96,7 +97,7 @@ class RedisMessageRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertCount(10, $lastMessages);
         $this->assertEquals($lastMessages[0]->getId(), 20);
         $this->assertEquals($lastMessages[9]->getId(), 11);
-        
+
         $lastMessages = $repo->getLastMessages(10, 11);
 
         $this->assertCount(10, $lastMessages);

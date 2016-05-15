@@ -16,6 +16,9 @@ use App\Store\Contracts\RememberTokenRepositoryContract;
  */
 class ArrayRememberTokenRepository implements RememberTokenRepositoryContract
 {
+    /**
+     * @var array
+     */
     protected $tokens = [];
 
     /**
@@ -42,6 +45,8 @@ class ArrayRememberTokenRepository implements RememberTokenRepositoryContract
         if (!$this->exists($tokenValue)) {
             throw new TokenDoesNotExistException;
         }
+
+        return $this->tokens[$tokenValue];
     }
 
     /**
@@ -49,6 +54,6 @@ class ArrayRememberTokenRepository implements RememberTokenRepositoryContract
      */
     public function save(RememberToken $token)
     {
-        $this->tokens[$token->getTokenValue()] = $token;
+        $this->tokens[$token->getTokenValue()] = $token->getUserId();
     }
 }

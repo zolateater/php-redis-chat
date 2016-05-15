@@ -4,18 +4,14 @@
  * Примитивное приложение
  */
 
+use App\Application;
+use Symfony\Component\HttpFoundation\Request;
 
 require "../vendor/autoload.php";
 
-$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-
-$application = new \App\Application();
-$application->bootstrap();
-$application->setRequest($request);
-
-header("Set-Cookie: key=someOtherValue");
-
-$response = $application->getResponse();
-//$response->send();
+$request = Request::createFromGlobals();
+$application = new Application('redis');
+$response = $application->handleRequest($request);
+$response->send();
 
 
