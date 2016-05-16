@@ -9,13 +9,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ChatController extends Controller
 {
+    /**
+     * Наша страница с чатом
+     *
+     * @return string|RedirectResponse
+     */
     public function index()
     {
-//        if ( ! $this->currentUser) {
-//            return new RedirectResponse('/');
-//        }
-        
-        $this->currentUser = new User('cherry90', 'Бомж иван');
+        if ( ! $this->currentUser) {
+            return new RedirectResponse('/');
+        }
 
         $view = new View("chat.twig", ['currentUser' => $this->currentUser]);
         return $view->render();

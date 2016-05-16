@@ -5,7 +5,6 @@ namespace App\Websocket;
 use App\Application;
 use App\Auth\RequestWithCookie;
 use App\Model\User;
-use Guzzle\Http\Message\EntityEnclosingRequest;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Exception, SplObjectStorage;
@@ -38,7 +37,7 @@ class Chat implements MessageComponentInterface
     }
 
     /**
-     * Соединение
+     * Соединение с сервером вебсокетов
      *
      * @param ConnectionInterface $conn
      */
@@ -50,12 +49,9 @@ class Chat implements MessageComponentInterface
         $user = $this->application->authorize($connectionRequest);
 
         // Если пользователь неавторизован - насильно закрываем соединение
-        if (!$user) {
+        $user ?
+            $this->clients->attach(new OnlineUser($conn, $user)):
             $conn->close();
-            return;
-        }
-
-        $this->clients->attach(new OnlineUser($conn, $user));
     }
 
     public function onMessage(ConnectionInterface $from, $msg)
@@ -78,8 +74,6 @@ class Chat implements MessageComponentInterface
     {
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
-
-        echo "Connection {$conn->resourceId} has disconnected\n";
     }
 
     public function onError(ConnectionInterface $conn, Exception $e)
