@@ -91,37 +91,4 @@ class Router
         
         return new RouteInfo($matchedRouteParameters['controller'], $matchedRouteParameters['action']);
     }
-
-    /**
-     * Обработка ошибки 404
-     *
-     * @param ResourceNotFoundException $exception
-     * @return Response
-     */
-    public function getNotFoundResponse(ResourceNotFoundException $exception) : Response
-    {
-        return new Response("Sorry, Mario, but your page is not found", 404);
-    }
-
-    /**
-     * Вернуть ответ для серьезной ошибки, мешающей работе системы
-     *
-     * @param SystemException  $exception
-     * @return Response
-     */
-    public function getCriticalErrorResponse(SystemException $exception) : Response
-    {
-        return new Response('Something really critical just happened!', 500);
-    }
-
-    /**
-     * Обработка ошибки 500
-     * 
-     * @param ApplicationException $exception
-     * @return Response
-     */
-    public function getApplicationErrorResponse(ApplicationException $exception) : Response 
-    {
-        return new Response('Server error', 500);
-    }
 }

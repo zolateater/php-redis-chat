@@ -1,5 +1,6 @@
 <?php
-use App\Auth\Authenticator;
+use App\Auth\Authorizer;
+use App\Auth\RequestWithCookie;
 use App\Model\User;
 use App\Store\Repository\ArrayRememberTokenRepository;
 use App\Store\Repository\ArrayUserRepository;
@@ -20,10 +21,10 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
      */
     public function it_does_not_authenticate_user_if_request_is_clear()
     {
-        $auth = new Authenticator();
+        $auth = new Authorizer();
 
         $this->assertNull(
-            $auth->authorize(new Request(), new ArrayRememberTokenRepository(), new ArrayUserRepository())
+            $auth->authorize(new RequestWithCookie(), new ArrayRememberTokenRepository(), new ArrayUserRepository())
         );
     }
 
@@ -36,8 +37,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
      */
     public function it_does_authenticate_user_if_cookie_is_set_and_user_exists()
     {
-
-
         $user = new User('superman', 'Clark Kent');
         $userRepo = new ArrayUserRepository();
         $userRepo->save($user);
@@ -47,10 +46,11 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $tokenRepo->save($rememberToken);
 
         $request = new Request();
-        $request->cookies->set(Authenticator::CookieAuthKey, $rememberToken->getTokenValue());
+        $request->cookies->set(Authorizer::CookieAuthKey, $rememberToken->getTokenValue());
+        $requestWithCookie = RequestWithCookie::createFromHttpRequest($request);
 
-        $auth = new Authenticator('array');
-        $authorizedUser = $auth->authorize($request, $tokenRepo, $userRepo);
+        $auth = new Authorizer();
+        $authorizedUser = $auth->authorize($requestWithCookie, $tokenRepo, $userRepo);
 
         $this->assertNotNull($authorizedUser);
         $this->assertEquals('Clark Kent', $authorizedUser->getFullName());

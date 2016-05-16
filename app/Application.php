@@ -2,7 +2,8 @@
 
 namespace App;
 
-use App\Auth\Authenticator;
+use App\Auth\Authorizer;
+use App\Auth\RequestWithCookie;
 use App\Exception\Application\ApplicationException;
 use App\Exception\System\SystemException;
 use App\Model\User;
@@ -48,6 +49,11 @@ class Application
     protected $messageRepository;
 
     /**
+     * @var Authorizer
+     */
+    protected $authorizer;
+    
+    /**
      * Application constructor.
      * 
      * @param string $databaseType 
@@ -66,7 +72,7 @@ class Application
     }
 
     /**
-     * Обработка запроса
+     * Обработка HTTP запроса
      * 
      * @param Request $request
      * @return Response
@@ -86,7 +92,7 @@ class Application
                 $this->userRepository,
                 $this->tokenRepository,
                 $this->messageRepository,    
-                $this->authorize($request)
+                $this->authorize(RequestWithCookie::createFromHttpRequest($request))
             );
             
             // Вызываем action
@@ -121,13 +127,17 @@ class Application
     /**
      * Получает пользователя, который совершает этот запрос
      *
-     * @param Request $request
+     * @param RequestWithCookie $request
      * @return User|null
      */
-    public function authorize(Request $request)
+    public function authorize(RequestWithCookie $request)
     {
-        $authenticator = new Authenticator();
-        return $authenticator->authorize($request, $this->getTokenRepository(), $this->getUserRepository());
+        $authorizer = new Authorizer();
+        return $authorizer->authorize(
+            $request,
+            $this->getTokenRepository(), 
+            $this->getUserRepository()
+        );
     }
 
     /**
@@ -198,16 +208,5 @@ class Application
     public function getMessageRepository()
     {
         return $this->messageRepository;
-    }
-
-    /**
-     * Возвращает путь до папки с представлениями
-     *
-     * @param string $fileName
-     * @return string
-     */
-    public static function viewPath(string $fileName = '') : string
-    {
-        return __DIR__ . '/../resources/view/' . $fileName;
     }
 }

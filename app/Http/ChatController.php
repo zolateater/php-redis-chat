@@ -1,15 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zolat
- * Date: 15.05.16
- * Time: 18:28
- */
 
 namespace App\Http;
 
 
-class ChatController
-{
+use App\Model\User;
+use App\View\View;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
+class ChatController extends Controller
+{
+    public function index()
+    {
+//        if ( ! $this->currentUser) {
+//            return new RedirectResponse('/');
+//        }
+        
+        $this->currentUser = new User('cherry90', 'Бомж иван');
+
+        $view = new View("chat.twig", ['currentUser' => $this->currentUser]);
+        return $view->render();
+    }
 }

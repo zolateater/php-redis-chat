@@ -2,7 +2,8 @@
 
 
 use App\Application;
-use App\Auth\Authenticator;
+use App\Auth\Authorizer;
+use App\Auth\RequestWithCookie;
 use App\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +24,9 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $app->getTokenRepository()->save($rememberToken);
 
         $request = new Request();
-        $request->cookies->set(Authenticator::CookieAuthKey, $rememberToken->getTokenValue());
+        $request->cookies->set(Authorizer::CookieAuthKey, $rememberToken->getTokenValue());
 
-        $authorizedUser = $app->authorize($request);
+        $authorizedUser = $app->authorize(RequestWithCookie::createFromHttpRequest($request));
 
         $this->assertNotNull($authorizedUser);
         $this->assertEquals('Clark Kent', $authorizedUser->getFullName());

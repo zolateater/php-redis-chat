@@ -6,7 +6,7 @@
  * Date: 15.05.16
  * Time: 18:31
  */
-class ApplicationViewPathTest extends PHPUnit_Framework_TestCase
+class ViewTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Корректность пути до view
@@ -15,6 +15,6 @@ class ApplicationViewPathTest extends PHPUnit_Framework_TestCase
      */
     public function it_returns_correct_path()
     {
-        $this->assertTrue(file_exists(\App\Application::viewPath('layout.twig')));
+        $this->assertTrue(file_exists(\App\View\View::viewPath('layout.twig')));
     }
 }

@@ -69,19 +69,4 @@ abstract class Controller
         $this->tokenRepository = $tokenRepository;
         $this->messageRepository = $messageRepository;
     }
-
-    /**
-     * Метод для создания view 
-     * 
-     * @param string $path - путь к шаблону относительно папки resources/view/
-     * @param array $viewData - переменные, передаваемые в шаблон
-     * @return string
-     */
-    public function renderView(string $path, array $viewData = []) : string
-    {
-        $loader = new Twig_Loader_Filesystem(Application::viewPath());
-        $twig = new Twig_Environment($loader);
-        
-        return $twig->render($path, $viewData);
-    }
 }

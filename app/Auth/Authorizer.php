@@ -8,34 +8,37 @@ use App\Store\Contracts\RememberTokenRepositoryContract;
 use App\Store\Contracts\UserRepositoryContract;
 use Symfony\Component\HttpFoundation\Request;
 
-class Authenticator
+/**
+ * Class Authorizer
+ * @package App\Auth
+ *
+ * Класс, ответственный за авторизацию запросов к приложению.
+ */
+class Authorizer
 {
     /**
      * Имя куки, по которой мы пытаемся авторизовать пользователя
      */
     const CookieAuthKey = 'rememberToken';
-    
+
     /**
      * Авторизация запроса
-     * 
-     * @param Request $request
+     *
+     * @param RequestWithCookie $request
      * @param RememberTokenRepositoryContract $tokenRepository
      * @param UserRepositoryContract $userRepository
      * @return User|null
      */
-    public function authorize(
-        Request $request, 
-        RememberTokenRepositoryContract $tokenRepository, 
-        UserRepositoryContract $userRepository
-    )
+    public function authorize(RequestWithCookie $request, RememberTokenRepositoryContract $tokenRepository,  UserRepositoryContract $userRepository)
     {
-        $authToken = $request->cookies->get(static::CookieAuthKey, '');
+        $requestToken = $request->get(static::CookieAuthKey);
 
-        if ( ! $tokenRepository->exists($authToken)) {
+        // Токен авторизации
+        if ( ! $tokenRepository->exists($requestToken)) {
             return null;
         }
-
-        $userId = $tokenRepository->getOwnerId($authToken);
+        
+        $userId = $tokenRepository->getOwnerId($requestToken);
         return $userRepository->find($userId);
     }    
 }
