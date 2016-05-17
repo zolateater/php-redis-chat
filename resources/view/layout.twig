@@ -9,7 +9,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Logo Nav - Start Bootstrap Template</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <title>
+        {{ block('title') }}
+    </title>
 
     <!-- Bootstrap Core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +27,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    {{ block('headerScripts') }}
 </head>
 
 <body>
@@ -69,16 +73,13 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
-            {% block content %}
-                <h1>Простой чат</h1>
-                <p>
-                    Просто заполните форму ниже. <br />
-                </p>
-            {% endblock %}
+            {{ block('content') }}
         </div>
     </div>
 </div>
 <!-- /.container -->
+
+{{ block('footerScripts') }}
 
 </body>
 

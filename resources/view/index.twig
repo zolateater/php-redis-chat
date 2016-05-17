@@ -1,9 +1,33 @@
 {% extends "layout.twig" %}
 
+{% block footerScripts %}
+    <script src="/js/bundle.js"></script>
+{% endblock %}
+
+{% block title %}
+    Тайтл
+{% endblock %}
+
 {% block content %}
     <p class="important">
-        Вам нужно зарегистрироваться, либо авторизоваться, воспользоваться чатом.
+        Вам нужно зарегистрироваться, либо войти, чтобы воспользоваться чатом.
         <br>
         Это недолго.
     </p>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>
+                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                Регистрация
+            </h4>
+            <div id="registerForm"></div>
+        </div>
+        <div class="col-md-6">
+            <h4>
+                <i class="fa fa-sign-in"></i>
+                Вход
+            </h4>
+            <div id="authForm"></div>
+        </div>
+    </div>
 {% endblock %}

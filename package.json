@@ -1,0 +1,31 @@
+{
+  "name": "redis-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zolateater/php-redis-chat.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zolateater/php-redis-chat/issues"
+  },
+  "homepage": "https://github.com/zolateater/php-redis-chat#readme",
+  "dependencies": {
+    "browserify": "^13.0.1",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^2.13.4",
+    "react": "^15.0.2",
+    "react-dom": "^15.0.2",
+    "typescript": "^1.8.10",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
